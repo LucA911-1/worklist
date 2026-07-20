@@ -1,0 +1,18 @@
+{
+  "name": "worklist-app",
+  "version": "1.0.0",
+  "description": "工作清单应用 - 基于腾讯云 EdgeOne 的多人协作工作管理工具",
+  "scripts": {
+    "dev": "npx edgeone pages dev",
+    "build": "echo 'Static site, no build needed'",
+    "deploy": "npx edgeone pages deploy ."
+  },
+  "keywords": [
+    "worklist",
+    "todo",
+    "task-management",
+    "edgeone",
+    "serverless"
+  ],
+  "license": "MIT"
+}

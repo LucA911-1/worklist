@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#4F6EF7">
+    <title>工作清单</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 顶部导航栏 -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1 class="app-title">工作清单</h1>
+            </div>
+            <div class="header-right">
+                <div class="sync-status" id="syncStatus">
+                    <span class="sync-dot sync-dot--offline"></span>
+                    <span class="sync-text">未连接</span>
+                </div>
+                <button class="user-btn" id="userBtn">
+                    <span class="user-avatar" id="userAvatar">?</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- 主内容区 -->
+        <main class="app-main" id="mainContent">
+            <!-- 清单视图 -->
+            <section class="view view--list active" id="viewList">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">全部</button>
+                    <button class="filter-tab" data-filter="once">一次性</button>
+                    <button class="filter-tab" data-filter="recurring">重复性</button>
+                    <button class="filter-tab" data-filter="today">今日</button>
+                </div>
+                <div class="task-summary" id="taskSummary">
+                    <div class="summary-item">
+                        <span class="summary-num" id="totalCount">0</span>
+                        <span class="summary-label">总计</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-num summary-num--done" id="doneCount">0</span>
+                        <span class="summary-label">已完成</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-num summary-num--pending" id="pendingCount">0</span>
+                        <span class="summary-label">待办</span>
+                    </div>
+                </div>
+                <div class="task-list" id="taskList">
+                    <!-- 任务卡片由JS动态生成 -->
+                </div>
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-icon">📋</div>
+                    <p class="empty-text">还没有工作清单</p>
+                    <p class="empty-hint">点击下方 + 按钮添加工作</p>
+                </div>
+            </section>
+
+            <!-- 日历视图 -->
+            <section class="view view--calendar" id="viewCalendar">
+                <div class="calendar-header">
+                    <button class="cal-nav-btn" id="prevMonth">&lsaquo;</button>
+                    <div class="cal-title" id="calTitle">2026年7月</div>
+                    <button class="cal-nav-btn" id="nextMonth">&rsaquo;</button>
+                </div>
+                <div class="calendar-weekdays">
+                    <div class="weekday">日</div>
+                    <div class="weekday">一</div>
+                    <div class="weekday">二</div>
+                    <div class="weekday">三</div>
+                    <div class="weekday">四</div>
+                    <div class="weekday">五</div>
+                    <div class="weekday">六</div>
+                </div>
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- 日期格子由JS动态生成 -->
+                </div>
+                <div class="calendar-tasks" id="calendarTasks">
+                    <div class="cal-tasks-title" id="calTasksTitle">今日工作</div>
+                    <div class="cal-tasks-list" id="calTasksList">
+                        <!-- 选中日期的任务 -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 添加工作视图 -->
+            <section class="view view--add" id="viewAdd">
+                <div class="add-container">
+                    <h2 class="add-title">添加工作</h2>
+                    <p class="add-hint">输入工作内容，系统将自动识别类型、日期和时间</p>
+                    
+                    <div class="input-area">
+                        <textarea 
+                            class="work-input" 
+                            id="workInput" 
+                            placeholder="例如：&#10;每天早上9点开早会&#10;明天下午3点提交项目报告&#10;每周一周三周五健身&#10;下个月5号交房租"
+                            rows="6"
+                        ></textarea>
+                    </div>
+
+                    <div class="parse-preview" id="parsePreview" style="display:none;">
+                        <h3 class="preview-title">识别结果</h3>
+                        <div class="preview-list" id="previewList"></div>
+                    </div>
+
+                    <div class="add-actions">
+                        <button class="btn btn--secondary" id="parseBtn">智能识别</button>
+                        <button class="btn btn--primary" id="addTaskBtn">添加到清单</button>
+                    </div>
+
+                    <div class="quick-templates">
+                        <h3 class="template-title">快捷模板</h3>
+                        <div class="template-list">
+                            <button class="template-btn" data-template="每天早上9点开早会">每日早会</button>
+                            <button class="template-btn" data-template="每周五下午5点写周报">每周周报</button>
+                            <button class="template-btn" data-template="每月1号核对账目">每月对账</button>
+                            <button class="template-btn" data-template="明天上午10点客户会议">客户会议</button>
+                            <button class="template-btn" data-template="每天下午6点整理桌面">日常整理</button>
+                            <button class="template-btn" data-template="每周二周四代码评审">代码评审</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 底部导航栏 -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-view="list">
+                <span class="nav-icon">📋</span>
+                <span class="nav-label">清单</span>
+            </button>
+            <button class="nav-item" data-view="calendar">
+                <span class="nav-icon">📅</span>
+                <span class="nav-label">日历</span>
+            </button>
+            <button class="nav-item nav-item--add" data-view="add">
+                <span class="nav-add-icon">+</span>
+            </button>
+            <button class="nav-item" data-view="sync" id="navSync">
+                <span class="nav-icon">☁️</span>
+                <span class="nav-label">同步</span>
+            </button>
+            <button class="nav-item" data-view="settings" id="navSettings">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">设置</span>
+            </button>
+        </nav>
+
+        <!-- 任务详情弹窗 -->
+        <div class="modal-overlay" id="taskDetailModal">
+            <div class="modal-sheet">
+                <div class="modal-handle"></div>
+                <div class="modal-content" id="taskDetailContent">
+                    <!-- 任务详情由JS动态生成 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 用户设置弹窗 -->
+        <div class="modal-overlay" id="settingsModal">
+            <div class="modal-sheet">
+                <div class="modal-handle"></div>
+                <div class="modal-content">
+                    <h2 class="modal-title">设置</h2>
+                    <div class="setting-group">
+                        <label class="setting-label">你的名字</label>
+                        <input type="text" class="setting-input" id="userNameInput" placeholder="输入你的名字">
+                    </div>
+                    <div class="setting-group">
+                        <label class="setting-label">云端地址</label>
+                        <input type="text" class="setting-input" id="apiUrlInput" placeholder="https://your-project.edgeone.app">
+                        <p class="setting-hint">EdgeOne Pages 部署地址，留空则仅本地使用</p>
+                    </div>
+                    <div class="setting-group">
+                        <label class="setting-label">数据管理</label>
+                        <div class="setting-actions">
+                            <button class="btn btn--secondary btn--sm" id="exportBtn">导出数据</button>
+                            <button class="btn btn--danger btn--sm" id="clearBtn">清空本地数据</button>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <label class="setting-label">关于</label>
+                        <p class="about-text">工作清单 v1.0</p>
+                        <p class="about-text">基于腾讯云 EdgeOne 边缘函数 + KV存储</p>
+                        <p class="about-text">支持多人协作 · 云端同步 · 离线使用</p>
+                    </div>
+                    <button class="btn btn--primary" id="saveSettingsBtn">保存设置</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 同步面板弹窗 -->
+        <div class="modal-overlay" id="syncModal">
+            <div class="modal-sheet">
+                <div class="modal-handle"></div>
+                <div class="modal-content">
+                    <h2 class="modal-title">云端同步</h2>
+                    <div class="sync-info">
+                        <div class="sync-info-row">
+                            <span class="sync-info-label">状态</span>
+                            <span class="sync-info-value" id="syncInfoStatus">未连接</span>
+                        </div>
+                        <div class="sync-info-row">
+                            <span class="sync-info-label">上次同步</span>
+                            <span class="sync-info-value" id="syncInfoTime">从未</span>
+                        </div>
+                        <div class="sync-info-row">
+                            <span class="sync-info-label">本地任务</span>
+                            <span class="sync-info-value" id="syncInfoLocal">0</span>
+                        </div>
+                        <div class="sync-info-row">
+                            <span class="sync-info-label">云端任务</span>
+                            <span class="sync-info-value" id="syncInfoRemote">0</span>
+                        </div>
+                        <div class="sync-info-row">
+                            <span class="sync-info-label">协作成员</span>
+                            <span class="sync-info-value" id="syncInfoUsers">0</span>
+                        </div>
+                    </div>
+                    <div class="sync-actions">
+                        <button class="btn btn--primary" id="syncNowBtn">立即同步</button>
+                        <button class="btn btn--secondary" id="syncPullBtn">仅拉取云端</button>
+                        <button class="btn btn--secondary" id="syncPushBtn">仅推送本地</button>
+                    </div>
+                    <div class="sync-log" id="syncLog">
+                        <!-- 同步日志 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast 提示 -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script src="js/parser.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/sync.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/taskList.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
